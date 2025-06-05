@@ -1,0 +1,6 @@
+[submodule "Firefox-Config/arkenfox-user.js"]
+	path = Firefox-Config/arkenfox-user.js
+	url = https://git.kska.io/notkshitij/arkenfox-user.js.git
+[submodule "Firefox-Config/Betterfox"]
+	path = Firefox-Config/Betterfox
+	url = https://git.kska.io/notkshitij/Betterfox.git
