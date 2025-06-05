@@ -4,3 +4,9 @@
 [submodule "Firefox-Config/Betterfox"]
 	path = Firefox-Config/Betterfox
 	url = https://git.kska.io/notkshitij/Betterfox.git
+[submodule "Firefox-Config/Betterfox.wiki"]
+	path = Firefox-Config/Betterfox.wiki
+	url = https://git.kska.io/notkshitij/Betterfox.wiki.git
+[submodule "Firefox-Config/arkenfox-user.js.wiki"]
+	path = Firefox-Config/arkenfox-user.js.wiki
+	url = https://git.kska.io/notkshitij/arkenfox-user.js.wiki.git
