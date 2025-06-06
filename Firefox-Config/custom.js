@@ -1,44 +1,9 @@
-/** SPECULATIVE LOADING ***/
-user_pref("browser.send_pings", false); // [DEFAULT: false]
-
-/** SEARCH / URL BAR ***/
-user_pref("browser.urlbar.suggest.quicksuggest.nonsponsored", false); // [FF95+]
-user_pref("browser.urlbar.suggest.quicksuggest.sponsored", false); // [FF92+]
-user_pref("browser.urlbar.suggest.searches", false);
-user_pref("browser.search.separatePrivateDefault", true); // [FF70+]
-
-/** PASSWORDS ***/
-user_pref("signon.autofillForms", false);
-user_pref("signon.formlessCapture.enabled", false);
-
-/** SAFE BROWSING ***/
-user_pref("browser.safebrowsing.malware.enabled", false);
-user_pref("browser.safebrowsing.phishing.enabled", false);
-user_pref("browser.safebrowsing.downloads.enabled", false);
-user_pref("browser.safebrowsing.downloads.remote.url", ""); // Defense-in-depth
-user_pref("browser.safebrowsing.downloads.remote.block_uncommon", false);
-
-/** CRASH REPORTS ***/
-user_pref("browser.crashReports.unsubmittedCheck.autoSubmit2", false); // [DEFAULT: false]
-
-/** MOZILLA UI ***/
-user_pref("browser.shopping.experience2023.enabled", false); // [DEFAULT: false]
-
-/** URL BAR ***/
-user_pref("browser.urlbar.addons.featureGate", false); // [FF115+]
-user_pref("browser.urlbar.fakespot.featureGate", false); // [FF130+] [DEFAULT: false]
-user_pref("browser.urlbar.mdn.featureGate", false); // [FF117+] [HIDDEN PREF]
-user_pref("browser.urlbar.pocket.featureGate", false); // [FF116+] [DEFAULT: false]
-user_pref("browser.urlbar.weather.featureGate", false); // [FF108+] [DEFAULT: false]
-user_pref("browser.urlbar.yelp.featureGate", false); // [FF124+]
-user_pref("browser.urlbar.clipboard.featureGate", false);
-
 /** SSL / OCSP **/
 user_pref("security.ssl.require_safe_negotiation", true);
 user_pref("security.OCSP.enabled", 1); // [DEFAULT: 1] // CHANGE IN user.js UPAR UPAR
 user_pref("security.OCSP.require", true);
 
-****************************************************************************
+/****************************************************************************
  * START: MY OVERRIDES                                                      *
  ****************************************************************************/
 // visit https://github.com/yokoffing/Betterfox/wiki/Common-Overrides
@@ -249,22 +214,3 @@ user_pref("geo.provider.use_geoclue", false); // [FF102+] [LINUX]
 /****************************************************************************
  * END OF ARKEN FOX                                                         *
  ***************************************************************************/
-
-
-
-/****************************************************************************************
- * OPTION: SHARPEN SCROLLING                                                           *
- ****************************************************************************************/
-// credit: https://github.com/black7375/Firefox-UI-Fix
-// only sharpen scrolling
-user_pref("apz.overscroll.enabled", true); // DEFAULT NON-LINUX
-user_pref("general.smoothScroll", true); // DEFAULT
-user_pref("mousewheel.min_line_scroll_amount", 10); // adjust this number to your liking; default=5
-user_pref("general.smoothScroll.mouseWheel.durationMinMS", 80); // default=50
-user_pref("general.smoothScroll.currentVelocityWeighting", "0.15"); // default=.25
-user_pref("general.smoothScroll.stopDecelerationWeighting", "0.6"); // default=.4
-// Firefox Nightly only:
-// [1] https://bugzilla.mozilla.org/show_bug.cgi?id=1846935
-user_pref("general.smoothScroll.msdPhysics.enabled", false); // [FF122+ Nightly]
-
-
