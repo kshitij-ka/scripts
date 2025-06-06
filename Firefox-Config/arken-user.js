@@ -114,6 +114,7 @@ user_pref("network.gio.supported-protocols", ""); // [HIDDEN PREF] [DEFAULT: ""]
    // user_pref("network.trr.uri", "https://example.dns");
    // user_pref("network.trr.custom_uri", "https://example.dns");
 
+
 /*** [SECTION 1200]: HTTPS (SSL/TLS / OCSP / CERTS / HPKP)
    Your cipher and other settings can be used in server side fingerprinting
    [TEST] https://www.ssllabs.com/ssltest/viewMyClient.html
@@ -143,104 +144,6 @@ user_pref("security.ssl.require_safe_negotiation", true);
  * [3] https://blog.cloudflare.com/tls-1-3-overview-and-q-and-a/ ***/
 user_pref("security.tls.enable_0rtt_data", false);
 
-/** OCSP (Online Certificate Status Protocol)
-   [1] https://scotthelme.co.uk/revocation-is-broken/
-   [2] https://blog.mozilla.org/security/2013/07/29/ocsp-stapling-in-firefox/
-***/
-/* 1211: enforce OCSP fetching to confirm current validity of certificates
- * 0=disabled, 1=enabled (default), 2=enabled for EV certificates only
- * OCSP (non-stapled) leaks information about the sites you visit to the CA (cert authority)
- * It's a trade-off between security (checking) and privacy (leaking info to the CA)
- * [NOTE] This pref only controls OCSP fetching and does not affect OCSP stapling
- * [SETTING] Privacy & Security>Security>Certificates>Query OCSP responder servers...
- * [1] https://en.wikipedia.org/wiki/Ocsp ***/
-user_pref("security.OCSP.enabled", 1); // [DEFAULT: 1]
-/* 1212: set OCSP fetch failures (non-stapled, see 1211) to hard-fail
- * [SETUP-WEB] SEC_ERROR_OCSP_SERVER_ERROR | SEC_ERROR_OCSP_UNAUTHORIZED_REQUEST
- * When a CA cannot be reached to validate a cert, Firefox just continues the connection (=soft-fail)
- * Setting this pref to true tells Firefox to instead terminate the connection (=hard-fail)
- * It is pointless to soft-fail when an OCSP fetch fails: you cannot confirm a cert is still valid (it
- * could have been revoked) and/or you could be under attack (e.g. malicious blocking of OCSP servers)
- * [1] https://blog.mozilla.org/security/2013/07/29/ocsp-stapling-in-firefox/
- * [2] https://www.imperialviolet.org/2014/04/19/revchecking.html
- * [3] https://letsencrypt.org/2024/12/05/ending-ocsp/ ***/
-user_pref("security.OCSP.require", true);
-
-/** CERTS / HPKP (HTTP Public Key Pinning) ***/
-/* 1223: enable strict PKP (Public Key Pinning)
- * 0=disabled, 1=allow user MiTM (default; such as your antivirus), 2=strict
- * [SETUP-WEB] MOZILLA_PKIX_ERROR_KEY_PINNING_FAILURE ***/
-user_pref("security.cert_pinning.enforcement_level", 2);
-/* 1224: enable CRLite [FF73+]
- * 0 = disabled
- * 1 = consult CRLite but only collect telemetry
- * 2 = consult CRLite and enforce both "Revoked" and "Not Revoked" results
- * 3 = consult CRLite and enforce "Not Revoked" results, but defer to OCSP for "Revoked" (default)
- * [1] https://bugzilla.mozilla.org/buglist.cgi?bug_id=1429800,1670985,1753071
- * [2] https://blog.mozilla.org/security/tag/crlite/ ***/
-user_pref("security.remote_settings.crlite_filters.enabled", true); // [DEFAULT: true FF137+]
-user_pref("security.pki.crlite_mode", 2);
-
-/** MIXED CONTENT ***/
-/* 1241: disable insecure passive content (such as images) on https pages ***/
-   // user_pref("security.mixed_content.block_display_content", true); // Defense-in-depth (see 1244)
-/* 1244: enable HTTPS-Only mode in all windows
- * When the top-level is HTTPS, insecure subresources are also upgraded (silent fail)
- * [SETTING] to add site exceptions: Padlock>HTTPS-Only mode>On (after "Continue to HTTP Site")
- * [SETTING] Privacy & Security>HTTPS-Only Mode (and manage exceptions)
- * [TEST] http://example.com [upgrade]
- * [TEST] http://httpforever.com/ | http://http.rip [no upgrade] ***/
-user_pref("dom.security.https_only_mode", true); // [FF76+]
-   // user_pref("dom.security.https_only_mode_pbm", true); // [FF80+]
-/* 1245: enable HTTPS-Only mode for local resources [FF77+] ***/
-   // user_pref("dom.security.https_only_mode.upgrade_local", true);
-/* 1246: disable HTTP background requests [FF82+]
- * When attempting to upgrade, if the server doesn't respond within 3 seconds, Firefox sends
- * a top-level HTTP request without path in order to check if the server supports HTTPS or not
- * This is done to avoid waiting for a timeout which takes 90 seconds
- * [1] https://bugzilla.mozilla.org/buglist.cgi?bug_id=1642387,1660945 ***/
-user_pref("dom.security.https_only_mode_send_http_background_request", false);
-
-/** UI (User Interface) ***/
-/* 1270: display warning on the padlock for "broken security" (if 1201 is false)
- * Bug: warning padlock not indicated for subresources on a secure page! [2]
- * [1] https://wiki.mozilla.org/Security:Renegotiation
- * [2] https://bugzilla.mozilla.org/1353705 ***/
-user_pref("security.ssl.treat_unsafe_negotiation_as_broken", true);
-/* 1272: display advanced information on Insecure Connection warning pages
- * only works when it's possible to add an exception
- * i.e. it doesn't work for HSTS discrepancies (https://subdomain.preloaded-hsts.badssl.com/)
- * [TEST] https://expired.badssl.com/ ***/
-user_pref("browser.xul.error_pages.expert_bad_cert", true);
-
-/*** [SECTION 1600]: REFERERS
-                  full URI: https://example.com:8888/foo/bar.html?id=1234
-     scheme+host+port+path: https://example.com:8888/foo/bar.html
-          scheme+host+port: https://example.com:8888
-   [1] https://feeding.cloud.geek.nz/posts/tweaking-referrer-for-privacy-in-firefox/
-***/
-user_pref("_user.js.parrot", "1600 syntax error: the parrot rests in peace!");
-/* 1602: control the amount of cross-origin information to send [FF52+]
- * 0=send full URI (default), 1=scheme+host+port+path, 2=scheme+host+port ***/
-user_pref("network.http.referer.XOriginTrimmingPolicy", 2);
-
-/*** [SECTION 1700]: CONTAINERS ***/
-user_pref("_user.js.parrot", "1700 syntax error: the parrot's bit the dust!");
-/* 1701: enable Container Tabs and its UI setting [FF50+]
- * [SETTING] General>Tabs>Enable Container Tabs
- * https://wiki.mozilla.org/Security/Contextual_Identity_Project/Containers ***/
-user_pref("privacy.userContext.enabled", true);
-user_pref("privacy.userContext.ui.enabled", true);
-/* 1702: set behavior on "+ Tab" button to display container menu on left click [FF74+]
- * [NOTE] The menu is always shown on long press and right click
- * [SETTING] General>Tabs>Enable Container Tabs>Settings>Select a container for each new tab ***/
-   // user_pref("privacy.userContext.newTabContainerOnLeftClick.enabled", true);
-/* 1703: set external links to open in site-specific containers [FF123+]
- * [SETUP-WEB] Depending on your container extension(s) and their settings
- * true=Firefox will not choose a container (so your extension can)
- * false=Firefox will choose the container/no-container (default)
- * [1] https://bugzilla.mozilla.org/1874599 ***/
-   // user_pref("browser.link.force_default_user_context_id_for_external_opens", true);
 
 /*** [SECTION 2000]: PLUGINS / MEDIA / WEBRTC ***/
 user_pref("_user.js.parrot", "2000 syntax error: the parrot's snuffed it!");
@@ -259,10 +162,9 @@ user_pref("media.peerconnection.ice.default_address_only", true);
  * [1] https://wiki.mozilla.org/GeckoMediaPlugins ***/
    // user_pref("media.gmp-provider.enabled", false);
 
-/*** [SECTION 2400]: DOM (DOCUMENT OBJECT MODEL) ***/
-user_pref("_user.js.parrot", "2400 syntax error: the parrot's kicked the bucket!");
-/* 2402: prevent scripts from moving and resizing open windows ***/
-user_pref("dom.disable_window_move_resize", true);
+
+
+
 
 /*** [SECTION 2600]: MISCELLANEOUS ***/
 user_pref("_user.js.parrot", "2600 syntax error: the parrot's run down the curtain!");
